@@ -12,8 +12,10 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/civicflow'
 
 export const seedDatabase = async () => {
   try {
-    console.log('[Seed] Connecting to database...');
-    await mongoose.connect(MONGO_URI);
+    if (mongoose.connection.readyState !== 1) {
+      console.log('[Seed] Connecting to database...');
+      await mongoose.connect(MONGO_URI);
+    }
     console.log('[Seed] Connected. Clearing previous collections...');
 
     await User.deleteMany({});

@@ -94,8 +94,13 @@ export default function Analytics() {
 
     try {
       setAuditActionLoading(true);
+      let auditStatus = 'AUDIT_PASSED';
+      if (action === 'FLAG_INCOMPLETE') auditStatus = 'AUDIT_FLAGGED_INCOMPLETE';
+      if (action === 'REJECT_FRAUD') auditStatus = 'AUDIT_REJECTED_FRAUD';
+
       const res = await api.put(`/work-orders/${selectedAuditWO._id}/audit-review`, {
         action,
+        auditStatus,
         auditNotes: auditNotes.trim() || 'Passed independent vigilance verification with clean photographic evidence.',
       });
 
@@ -288,10 +293,10 @@ export default function Analytics() {
                       #{wo._id.slice(-6).toUpperCase()}
                     </td>
                     <td className="py-3 px-4 text-white">
-                      {(wo.incident?.category || 'DEFECT').replace('_', ' ')}
+                      {(wo.incidentId?.category || wo.incident?.category || 'DEFECT').replace('_', ' ')}
                     </td>
                     <td className="py-3 px-4 text-[#94A3B8]">
-                      {wo.contractor?.contractorFirmName || wo.contractor?.name || 'Vetted Municipal Crew'}
+                      {wo.assignedContractorId?.contractorFirmName || wo.assignedContractorId?.name || wo.contractor?.contractorFirmName || wo.contractor?.name || 'Apex Infrastructure'}
                     </td>
                     <td className="py-3 px-4 font-bold text-white">
                       ₹{wo.costEstimate?.toLocaleString() || '12,000'}
@@ -306,7 +311,7 @@ export default function Analytics() {
                     <td className="py-3 px-4">
                       <span className="text-[#10B981] font-bold flex items-center gap-1 text-[11px]">
                         <ShieldCheck className="w-3.5 h-3.5" />
-                        <span>{wo.completionProof?.distanceFromIncident || 14.2}m &le; 35m</span>
+                        <span>{wo.geofenceDistanceMeters || wo.completionProof?.distanceFromIncident || 14.2}m &le; 35m</span>
                       </span>
                     </td>
                     <td className="py-3 px-4">
@@ -495,10 +500,10 @@ export default function Analytics() {
               
               {/* Dual Before/After Comparison Slider */}
               <BeforeAfterSlider
-                beforeImage={selectedAuditWO.incident?.photoUrl || 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80'}
-                afterImage={selectedAuditWO.completionProof?.photoUrl || 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=800&q=80'}
+                beforeImage={selectedAuditWO.incidentId?.photoUrl || selectedAuditWO.incident?.photoUrl || selectedAuditWO.beforePhotoUrl || 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80'}
+                afterImage={selectedAuditWO.afterPhotoUrl || selectedAuditWO.completionProof?.photoUrl || 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=800&q=80'}
                 title="Forensic Defect vs Repair Verification Slider"
-                geofenceDistance={selectedAuditWO.completionProof?.distanceFromIncident || 14.2}
+                geofenceDistance={selectedAuditWO.geofenceDistanceMeters || selectedAuditWO.completionProof?.distanceFromIncident || 14.2}
               />
 
               {/* Financial & GPS Telemetry Grid */}
@@ -506,7 +511,7 @@ export default function Analytics() {
                 <div>
                   <span className="text-[#64748B]">CONTRACTOR FIRM:</span>
                   <p className="font-bold text-white mt-0.5">
-                    {selectedAuditWO.contractor?.contractorFirmName || 'Apex Infrastructure'}
+                    {selectedAuditWO.assignedContractorId?.contractorFirmName || selectedAuditWO.contractor?.contractorFirmName || 'Apex Infrastructure'}
                   </p>
                 </div>
                 <div>
@@ -524,7 +529,7 @@ export default function Analytics() {
                 <div>
                   <span className="text-[#64748B]">GPS ON-SITE DISTANCE:</span>
                   <p className="font-bold text-[#10B981] mt-0.5">
-                    {selectedAuditWO.completionProof?.distanceFromIncident || 14.2}m (Threshold: &le; 35m)
+                    {selectedAuditWO.geofenceDistanceMeters || selectedAuditWO.completionProof?.distanceFromIncident || 14.2}m (Threshold: &le; 35m)
                   </p>
                 </div>
               </div>

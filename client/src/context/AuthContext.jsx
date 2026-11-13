@@ -56,6 +56,18 @@ export const AuthProvider = ({ children }) => {
   };
 
   const demoLogin = async (role) => {
+    try {
+      const res = await api.post('/auth/demo-login', { role });
+      if (res.data.success) {
+        localStorage.setItem('civicflow_token', res.data.token);
+        setToken(res.data.token);
+        setUser(res.data.user);
+        return res.data.user;
+      }
+    } catch (demoErr) {
+      console.warn('Dedicated demo-login endpoint returned error, falling back to credentials login:', demoErr.message);
+    }
+
     const credentials = {
       CITIZEN: { email: 'citizen@civicflow.gov.in', password: 'password123' },
       ADMIN: { email: 'admin@civicflow.gov.in', password: 'password123' },

@@ -217,9 +217,9 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// @route   POST /api/incidents/:id/subscribe
+// @route   POST /api/incidents/:id/subscribe and /api/incidents/:id/upvote
 // @desc    Citizen upvotes / subscribes to an incident
-router.post('/:id/subscribe', protect, async (req, res) => {
+const handleEndorsement = async (req, res) => {
   try {
     const incident = await Incident.findById(req.params.id);
     if (!incident) {
@@ -268,7 +268,10 @@ router.post('/:id/subscribe', protect, async (req, res) => {
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
-});
+};
+
+router.post('/:id/subscribe', protect, handleEndorsement);
+router.post('/:id/upvote', protect, handleEndorsement);
 
 // @route   PUT /api/incidents/:id/status
 // @desc    Admin updates status (TRIAGED, REJECTED, etc.)

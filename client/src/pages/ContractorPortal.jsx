@@ -199,8 +199,8 @@ export default function ContractorPortal() {
   // KPIs
   const totalAssigned = workOrders.length;
   const acceptedOrders = workOrders.filter((w) => w.stage === 'ACCEPTED').length;
-  const inProgressOrders = workOrders.filter((w) => w.stage === 'IN_PROGRESS').length;
-  const completedOrders = workOrders.filter((w) => w.stage === 'WORK_COMPLETED' || w.stage === 'INSPECTED_PASSED').length;
+  const inProgressOrders = workOrders.filter((w) => w.stage === 'ON_SITE' || w.stage === 'IN_PROGRESS').length;
+  const completedOrders = workOrders.filter((w) => w.stage === 'PENDING_INSPECTION' || w.stage === 'APPROVED' || w.stage === 'WORK_COMPLETED' || w.stage === 'INSPECTED_PASSED').length;
 
   return (
     <div className="space-y-6">
@@ -346,7 +346,7 @@ export default function ContractorPortal() {
 
                   {wo.stage === 'ACCEPTED' && (
                     <button
-                      onClick={() => handleUpdateStage(wo._id, 'IN_PROGRESS')}
+                      onClick={() => handleUpdateStage(wo._id, 'ON_SITE')}
                       disabled={actionLoading}
                       className="w-full py-2 rounded-lg bg-[#06B6D4] hover:bg-cyan-600 text-white font-mono text-xs font-bold transition-colors"
                     >
@@ -354,7 +354,7 @@ export default function ContractorPortal() {
                     </button>
                   )}
 
-                  {(wo.stage === 'IN_PROGRESS' || wo.stage === 'REWORK_REQUIRED') && (
+                  {(wo.stage === 'ON_SITE' || wo.stage === 'IN_PROGRESS' || wo.stage === 'REWORK_REQUIRED') && (
                     <button
                       onClick={() => openCompleteModal(wo)}
                       className="w-full py-2 rounded-lg bg-[#F59E0B] hover:bg-amber-600 text-slate-950 font-mono text-xs font-bold transition-colors shadow-sm flex items-center justify-center gap-1.5"
@@ -364,13 +364,13 @@ export default function ContractorPortal() {
                     </button>
                   )}
 
-                  {wo.stage === 'WORK_COMPLETED' && (
+                  {(wo.stage === 'PENDING_INSPECTION' || wo.stage === 'WORK_COMPLETED') && (
                     <div className="py-2 px-3 rounded-lg bg-[#10B981]/10 border border-[#10B981]/30 text-center font-mono text-xs text-[#10B981] font-bold">
                       ✓ Submitted for Engineer Sign-off
                     </div>
                   )}
 
-                  {wo.stage === 'INSPECTED_PASSED' && (
+                  {(wo.stage === 'APPROVED' || wo.stage === 'INSPECTED_PASSED') && (
                     <div className="py-2 px-3 rounded-lg bg-[#10B981]/20 border border-[#10B981]/40 text-center font-mono text-xs text-[#10B981] font-bold">
                       ✓ Inspected & Payment Released
                     </div>

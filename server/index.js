@@ -10,6 +10,8 @@ import workOrderRoutes from './routes/workOrders.js';
 import analyticsRoutes from './routes/analytics.js';
 import { upload } from './middleware/upload.js';
 import { startSlaDaemon } from './utils/slaDaemon.js';
+import { User } from './models/User.js';
+import { seedDatabase } from './seed/seedData.js';
 
 dotenv.config();
 
@@ -69,7 +71,21 @@ app.use((err, req, res, next) => {
 
 // Start Server
 const startServer = async () => {
-  await connectDB();
+  const connected = await connectDB();
+
+  // If database is connected and empty, auto-seed with initial municipal dockets and personas
+  if (connected) {
+    try {
+      const userCount = await User.countDocuments();
+      if (userCount === 0) {
+        console.log('[Auto-Seed] Database is empty. Seeding initial demonstration records...');
+        await seedDatabase();
+        console.log('[Auto-Seed] Database seeded successfully.');
+      }
+    } catch (seedErr) {
+      console.warn('[Auto-Seed Warning]', seedErr.message);
+    }
+  }
   
   // Start autonomous SLA watchdog daemon
   startSlaDaemon(45000);

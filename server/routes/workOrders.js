@@ -130,11 +130,16 @@ router.get('/:id', protect, async (req, res) => {
 // @desc    Contractor updates stage (ACCEPTED, ON_SITE)
 router.put('/:id/stage', protect, authorize('CONTRACTOR', 'ADMIN'), async (req, res) => {
   try {
-    const { stage } = req.body;
+    let { stage } = req.body;
     const workOrder = await WorkOrder.findById(req.params.id);
 
     if (!workOrder) {
       return res.status(404).json({ success: false, message: 'Work Order not found' });
+    }
+
+    // Normalize IN_PROGRESS alias to ON_SITE
+    if (stage === 'IN_PROGRESS') {
+      stage = 'ON_SITE';
     }
 
     if (!['ACCEPTED', 'ON_SITE'].includes(stage)) {
@@ -332,7 +337,14 @@ router.put('/:id/rework', protect, authorize('ADMIN'), async (req, res) => {
 // @desc    Governance Auditor conducts independent quality audit of proof-of-work
 router.put('/:id/audit-review', protect, authorize('AUDITOR', 'ADMIN'), async (req, res) => {
   try {
-    const { auditStatus, auditNotes } = req.body;
+    let { auditStatus, action, auditNotes } = req.body;
+
+    // Normalize from action if auditStatus not passed directly
+    if (!auditStatus && action) {
+      if (action === 'CERTIFY_CLEAN' || action === 'PASSED') auditStatus = 'AUDIT_PASSED';
+      else if (action === 'FLAG_INCOMPLETE') auditStatus = 'AUDIT_FLAGGED_INCOMPLETE';
+      else if (action === 'REJECT_FRAUD') auditStatus = 'AUDIT_REJECTED_FRAUD';
+    }
 
     if (!['AUDIT_PASSED', 'AUDIT_FLAGGED_INCOMPLETE', 'AUDIT_REJECTED_FRAUD'].includes(auditStatus)) {
       return res.status(400).json({ success: false, message: 'Invalid audit decision status' });
@@ -351,7 +363,16 @@ router.put('/:id/audit-review', protect, authorize('AUDITOR', 'ADMIN'), async (r
     workOrder.updatedAt = new Date();
 
     if (auditStatus === 'AUDIT_PASSED') {
-      // Certified clean by auditor - funds approved
+      // Certified clean by auditor - funds approved and incident marked RESOLVED
+      workOrder.stage = 'APPROVED';
+      workOrder.approvedCost = workOrder.costEstimate;
+      if (workOrder.incidentId) {
+        await Incident.findByIdAndUpdate(workOrder.incidentId._id, {
+          status: 'RESOLVED',
+          resolvedAt: new Date(),
+          updatedAt: new Date(),
+        });
+      }
     } else if (auditStatus === 'AUDIT_FLAGGED_INCOMPLETE') {
       // Demands supplementary contractor repair
       workOrder.stage = 'REWORK_REQUIRED';
