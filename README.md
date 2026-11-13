@@ -22,20 +22,6 @@ CivicFlow transforms traditional, broken civic grievance portals into an **intel
 
 ---
 
-## 🔒 Plagiarism & Peer Overlap Audit
-
-CivicFlow has been audited by a dedicated novelty agent against all peer capstone projects in the department:
-- ❌ **No Healthcare / Symptom ML** (disjoint from *MediPredict*)
-- ❌ **No 3D VR / Metaverse LMS** (disjoint from *AI 3D Virtual Learning*)
-- ❌ **No Freelance Gigs / Escrow** (disjoint from *SkillBridge*)
-- ❌ **No Accommodation / Hotel Booking** (disjoint from *StayYatra*)
-- ❌ **No Video Streaming / Trailers** (disjoint from *ToonVerse*)
-- ❌ **No Adventure Treks / Gear Shop** (disjoint from *WILDTRAIL*)
-- ❌ **No Attendance / Clock-in Systems** (disjoint from *Haazir*)
-
-**Evaluated Overlap Score: 0.0% (100% Novel & Unimpeachable)**.
-
----
 
 ## 👥 Multi-Role Personas (RBAC) & 1-Click Demo Logins
 
