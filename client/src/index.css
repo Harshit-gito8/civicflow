@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #080D17;
+    color: #F1F5F9;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: #3B82F6;
+    color: #FFFFFF;
+  }
+}
+
+/* Custom technical scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #080D17;
+}
+::-webkit-scrollbar-thumb {
+  background: #243247;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3B82F6;
+}
+
+/* Linear-inspired precise panels */
+.ops-panel {
+  background-color: #111B2B;
+  border: 1px solid #243247;
+  border-radius: 8px;
+}
+
+.ops-card {
+  background-color: #162235;
+  border: 1px solid #243247;
+  border-radius: 8px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ops-card:hover {
+  border-color: #3B82F6;
+  background-color: #1a273e;
+}
+
+/* Citizen Theme styling helpers */
+.citizen-panel {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Leaflet map dark styling */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  z-index: 10;
+  font-family: inherit !important;
+  background: #080D17 !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background-color: #111B2B !important;
+  color: #F1F5F9 !important;
+  border: 1px solid #243247;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.7);
+  padding: 0 !important;
+}
+
+.leaflet-popup-content {
+  margin: 12px !important;
+  line-height: 1.4 !important;
+}
+
+.leaflet-popup-tip {
+  background: #111B2B !important;
+  border: 1px solid #243247;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  color: #94A3B8 !important;
+  padding: 6px !important;
+}
+.leaflet-container a.leaflet-popup-close-button:hover {
+  color: #F1F5F9 !important;
+}
+
+/* Custom Marker Styling */
+.custom-leaflet-marker {
+  background: transparent;
+  border: none;
+}

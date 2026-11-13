@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Local Database Files
+server/data/
+data/
+*.lock
+WiredTiger*
+
+# Uploaded Files
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Production Build
+dist/
+client/dist/
+
+# Environment Variables
+.env
+client/.env
+server/.env
+*.local
+
+# Large Non-Project Documents
+*.pdf
+*.docx
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS Files
+.DS_Store
+Thumbs.db

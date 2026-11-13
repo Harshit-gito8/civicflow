@@ -1,0 +1,23 @@
+{
+  "name": "civicflow",
+  "version": "1.0.0",
+  "description": "CivicFlow: Municipal SLA-Driven Civic Infrastructure Lifecycle & Spatial Dispatch Engine",
+  "scripts": {
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "seed": "cd server && node seed/seedData.js",
+    "start:server": "cd server && npm start",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "test:server": "cd server && npm test"
+  },
+  "keywords": [
+    "civicflow",
+    "smart-city",
+    "geospatial",
+    "mern",
+    "sla-escalation",
+    "govtech"
+  ],
+  "author": "3rd Year B.E. Computer Science & Engineering",
+  "license": "MIT"
+}
