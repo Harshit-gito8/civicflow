@@ -113,9 +113,10 @@ export default function ContractorPortal() {
   const openCompleteModal = (wo) => {
     setActiveWO(wo);
     // Initialize contractor location slightly offset (~14m) from defect for seamless demonstration
-    if (wo.incident?.location?.coordinates) {
-      const [incLng, incLat] = wo.incident.location.coordinates;
-      setContractorCoords([incLng + 0.00012, incLat + 0.00008]);
+    const coords = wo.incidentId?.location?.coordinates || wo.incident?.location?.coordinates;
+    if (coords) {
+      const [incLng, incLat] = coords;
+      setContractorCoords([Number((incLng + 0.00012).toFixed(6)), Number((incLat + 0.00008).toFixed(6))]);
     }
   };
 
@@ -154,15 +155,18 @@ export default function ContractorPortal() {
     try {
       setActionLoading(true);
       const payload = {
+        afterPhotoUrl,
         photoUrl: afterPhotoUrl,
+        completionNotes,
         notes: completionNotes,
+        contractorCoordinates: contractorCoords,
         coordinates: contractorCoords,
       };
 
       const res = await api.post(`/work-orders/${activeWO._id}/complete`, payload);
       if (res.data.success) {
         toast.success(
-          `Proof of repair verified on-site (${res.data.distance}m <= 35m). Submitted for Municipal Engineer Sign-Off!`,
+          `Proof of repair verified on-site (${res.data.distance || res.data.workOrder?.geofenceDistanceMeters || liveDistance}m <= 35m). Submitted for Municipal Auditor Sign-Off!`,
           'Completion Logged'
         );
         setActiveWO(null);
@@ -185,12 +189,13 @@ export default function ContractorPortal() {
   };
 
   // Live Geofence Distance calculation for the active modal
-  const liveDistance = activeWO?.incident?.location?.coordinates
+  const incCoords = activeWO?.incidentId?.location?.coordinates || activeWO?.incident?.location?.coordinates;
+  const liveDistance = incCoords
     ? calculateHaversineDistance(
         contractorCoords[0],
         contractorCoords[1],
-        activeWO.incident.location.coordinates[0],
-        activeWO.incident.location.coordinates[1]
+        incCoords[0],
+        incCoords[1]
       )
     : 0;
 

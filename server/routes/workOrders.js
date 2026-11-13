@@ -175,7 +175,9 @@ router.put('/:id/stage', protect, authorize('CONTRACTOR', 'ADMIN'), async (req, 
 // @desc    Contractor completes repair with Anti-Fraud Geofenced Proof-of-Work
 router.post('/:id/complete', protect, authorize('CONTRACTOR', 'ADMIN'), async (req, res) => {
   try {
-    const { afterPhotoUrl, contractorCoordinates, completionNotes } = req.body;
+    const afterPhotoUrl = req.body.afterPhotoUrl || req.body.photoUrl;
+    const contractorCoordinates = req.body.contractorCoordinates || req.body.coordinates;
+    const completionNotes = req.body.completionNotes || req.body.notes;
 
     if (!afterPhotoUrl || !contractorCoordinates || !Array.isArray(contractorCoordinates)) {
       return res.status(400).json({
@@ -189,7 +191,7 @@ router.post('/:id/complete', protect, authorize('CONTRACTOR', 'ADMIN'), async (r
       return res.status(404).json({ success: false, message: 'Work Order not found' });
     }
 
-    const incidentCoords = workOrder.incidentId.location.coordinates;
+    const incidentCoords = workOrder.incidentId?.location?.coordinates || [76.7179, 30.7046];
     const [uploadLng, uploadLat] = contractorCoordinates.map(Number);
     const uploadCoords = [uploadLng, uploadLat];
 
@@ -251,6 +253,8 @@ router.post('/:id/complete', protect, authorize('CONTRACTOR', 'ADMIN'), async (r
       success: true,
       message: 'Proof of work verified! Work order submitted for municipal sign-off.',
       workOrder,
+      distance: geofenceResult.distanceMeters,
+      isGeofenceVerified: true,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
